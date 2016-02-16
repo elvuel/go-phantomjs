@@ -19,8 +19,23 @@ type Phantom struct {
 	errout io.ReadCloser
 }
 
-var nbInstance = 0
-var wrapperFileName = ""
+var (
+	nbInstance = 0
+	wrapperFileName = ""
+	phantomPath string
+)
+
+func SetPhantom(path string) {
+	phantomPath = path
+}
+
+func getPhantom() string {
+	if phantomPath == "" {
+		return "phantomjs"
+	} else {
+		return phantomPath
+	}
+}
 
 /*
 Create a new `Phantomjs` instance and return it as a pointer.
@@ -33,7 +48,7 @@ func Start(args ...string) (*Phantom, error) {
 	}
 	nbInstance += 1
 	args = append(args, wrapperFileName)
-	cmd := exec.Command("phantomjs", args...)
+	cmd := exec.Command(getPhantom(), args...)
 
 	inPipe, err := cmd.StdinPipe()
 	if err != nil {
